@@ -1,0 +1,11 @@
+torch
+torchvision
+# For GPU support, use:
+# pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+pillow
+tqdm
