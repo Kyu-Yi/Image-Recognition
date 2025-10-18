@@ -1,0 +1,147 @@
+# Config file
+
+# Data Config #
+data:
+  dataset_path: "sample_dataset"  # Path to dataset directory
+  image_size: 224  # Input image size
+  use_augmentation: true  # Enable/disable data augmentation
+  
+  # Data split ratios
+  splits:
+    test_size: 0.2  # 20% for test set
+    val_size: 0.2   # 20% of remaining for validation (16% of total)
+  
+  # DataLoader settings 
+  batch_size: 32
+  num_workers: 4  
+  pin_memory: true  
+  
+  # For quick testing
+  test_run: false
+  samples_per_class: 20  # Used only if test_run=true
+
+
+# Model Configuration #
+
+model:
+  # Architecture: resnet18, resnet50, or anything else
+  backbone: "resnet18"
+  
+  # Use ImageNet pretrained weights
+  pretrained: true
+  
+  # Freeze strategy: "none", "partial", "all"
+  # - none: Fine-tune all layers
+  # - partial: Freeze early layers, train top layers
+  # - all: Feature extraction only (freeze backbone, train classifier only)
+  freeze_backbone: "partial"
+  
+  num_classes: 7  # Image class number
+  dropout: 0.5  # Dropout rate classifier head
+
+# Training Configuration #
+
+training:
+  num_epochs: 15
+  
+  # Optimizer settings
+  optimizer: "adam"  # adam, sgd, adamw
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  momentum: 0.9  # For SGD only
+  
+  # Loss function
+  use_weighted_loss: true  # Use class weights to handle imbalance
+  label_smoothing: 0.0  # Label smoothing (0.0 = disabled)
+  
+  # Learning rate scheduler
+  scheduler:
+    type: "plateau"  # plateau, cosine, step
+    factor: 0.5  # For ReduceLROnPlateau
+    patience: 3  # For ReduceLROnPlateau
+    min_lr: 0.000001
+    
+  # Early stopping
+  early_stopping:
+    enabled: true
+    patience: 5  # Stop if no improvement for N epochs
+    min_delta: 0.001  # Minimum change to qualify as improvement
+  
+  # Checkpointing
+  save_every_epoch: false  # Save model checkpoint every epoch
+  save_best_only: true  # Save only the best model
+
+# Evaluation Configuration #
+
+evaluation:
+  # Metrics to compute
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1_score
+    - roc_auc  # Multi-class ROC-AUC
+  
+  # Confusion matrix settings
+  normalize_cm: true  # Generate normalized confusion matrix
+  
+  # Visualization settings
+  num_sample_predictions: 12  # Number of sample predictions to visualize
+
+
+# Visualization Configuration #
+visualization:
+  # Feature space visualization
+  feature_space:
+    enabled: true
+    max_samples: 300  # Maximum samples for t-SNE/PCA
+    methods:
+      - pca
+      - tsne
+  
+  # Grad-CAM settings
+  gradcam:
+    enabled: true
+    num_samples: 8  # Number of Grad-CAM visualizations
+    target_layer: "layer4"  # Layer to visualize (auto-detected if null)
+  
+  # Augmentation visualization
+  show_augmentations: true
+  
+  # Sample images per class
+  samples_per_class: 2
+
+
+# Output Configuration #
+
+outputs:
+  base_dir: "./output"
+  models_dir: "./output/models"
+  results_dir: "./output/results"
+  logs_dir: "./output/logs"
+  
+  # Figure settings
+  figure_dpi: 300
+  figure_format: "png"
+
+
+# System Configuration #
+
+system:
+  seed: 42  # Random seed for reproducibility
+  device: "auto"  # auto, cuda, cpu
+  cudnn_benchmark: true  # Enable cuDNN autotuner
+  
+  # Logging
+  logging:
+    level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+    log_to_file: true
+    log_filename: "training.log"
+
+
+# Experiment Tracking #
+
+experiment:
+  name: ""
+  description: ""
+  tags:
